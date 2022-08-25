@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello,digitalzone</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script src="../public/index_bundle.js"></script>
+    <header>
+        <div>
+            <h2>Header</h2>
+            <h3 class="title">HTML 태그 연습</h3>
+        </div>
+    </header>
+
+    <main style="background-color:#eef;">
+        <h2>Main</h2>
+        <a href="./study1.html">1로 이동</a>
+
+        <div style="background-color: lightgray">
+            <select disabled>
+                <option value="americano">아메리카노</option>
+                <option value="caffe latte">카페라테</option>
+                <option value="cafe au lait">카페오레</option>
+                <option value="espresso">에스프레소</option>
+            </select>
+            <!-- 드래그앤드랍 -->
+            <h1>드래그 앤 드롭을 이용한 객체의 이동</h1>
+            <p>그림을 드래그해서 옆의 사각형으로 옮겨보세요!</p>
+            <div class="drag" ondrop="drop(event)" ondragover="dragEnter(event)">
+                <img id="monalisa" width="180" height="280"
+                    src="http://www.tcpschool.com/examples/images/img_monalisa.png" draggable="true"
+                    ondragstart="drag(event)">
+            </div>
+            <div class="drag" ondrop="drop(event)" ondragover="dragEnter(event)"></div>
+
+            <script>
+                function dragEnter(ev) {
+                    ev.preventDefault();
+                }
+
+                function drag(ev) {
+                    ev.dataTransfer.setData("text", ev.target.id);
+                }
+
+                function drop(ev) {
+                    ev.preventDefault();
+                    var data = ev.dataTransfer.getData("text");
+                    ev.target.appendChild(document.getElementById(data));
+                }
+            </script>
+
+
+            <audio controls>
+                <source src="/examples/media/sample_audio_ogg.ogg" type="audio/ogg">
+                <source src="/examples/media/sample_audio_mp3.mp3" type="audio/mpeg">
+                이 문장은 여러분의 브라우저가 audio 태그를 지원하지 않을 때 화면에 표시됩니다!
+            </audio>
+            <video height="180" width="288" controls>
+                <source src="/examples/media/sample_video_ogg.ogg" type="video/ogg">
+                <source src="/examples/media/sample_video_mp4.mp4" type="video/mp4">
+                이 문장은 여러분의 브라우저가 video 태그를 지원하지 않을 때 화면에 표시됩니다!
+            </video>
+
+            <a href="https://www.google.com/" target="_blank">구글로이동</a>
+
+            <form>
+                button : <input type="button"><br>
+                <label for="check">checkbox</label> : <input id="check" type="checkbox"><br>
+                color : <input type="color"><br>
+                date : <input type="date"><br>
+                datetime-local : <input type="datetime-local"><br>
+                email : <input type="email"><br>
+                file : <input type="file"><br>
+                hidden : <input type="hidden"><br>
+                image : <input type="image"><br>
+                month : <input type="month"><br>
+                number : <input type="number"><br>
+                password : <input type="password"><br>
+                radio : <input type="radio"><br>
+                range : <input type="range"><br>
+                reset : <input type="reset"><br>
+                search : <input type="search"><br>
+                tel : <input type="tel"><br>
+                text : <input type="text"><br>
+                time : <input type="time"><br>
+                url : <input type="url"><br>
+                week : <input type="week"><br>
+                submit : <input type="submit"><br>
+            </form>
+
+            <form action="/examples/media/action_target.php" method="get">
+                여러분의 나이대를 골라보세요.<br>
+                <input type="radio" name="ages" id="teen" value="teenage">
+                <label for="teen">10대</label><br>
+                <input type="radio" name="ages" id="twenty" value="twenties">
+                <label for="twenty">20대</label><br>
+                <input type="radio" name="ages" id="thirty" value="thirties">
+                <label for="thirty">30대</label><br>
+                <input type="radio" name="ages" id="forty" value="forties">
+                <label for="forty">40대 이상</label><br>
+                <input type="submit">
+            </form>
+
+
+        </div>
+    </main>
+
+    <!--footer시작-->
+    <footer>
+        <h2>Footer</h2>
+        <div>
+            <a href="#datalist">datalist로 이동</a><br>
+            <a href="#">Top</a><br>
+            <span>footer/span태그는 마진이 없다</span>
+            <p>p태그는 마진이 있다. 저자정보,저작권 정보,연락처,사이트맵,연관페이지 등</p>
+            <blockquote>"blockquote"http://www.tcpschool.com/html-tags/blockquote</blockquote>
+            <q>"q태그"http://www.tcpschool.com/html-tags/blockquote</q>
+        </div>
+    </footer>
+</body>
+
+</html>

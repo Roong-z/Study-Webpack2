@@ -1,0 +1,23 @@
+.title {
+   color: red;
+}
+
+header {
+   background-color: lightgrey;
+   height: 100px;
+   text-align: center;
+}
+footer {
+   background-color: #ffcc00;
+   height: 250px;
+   clear: both;
+}
+
+.drag {
+   width: 180px;
+   height: 280px;
+   margin: 10px;
+   padding: 10px;
+   border: solid 15px #ffcc00;
+   float: left;
+}
