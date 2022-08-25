@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <!--	상단gnb무너짐,리셋같은존재-->
+    <link rel="stylesheet" href="/css/home/reset.css" />
+
+
+
+    <title>(주)디지털존 전자문서사업본부</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes" />
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="Generator" content="EditPlus">
+    <meta name="Author" content="">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+
+    <link rel="shortcut icon" href="/images/digitalzone.ico" type="image/x-ico">
+
+    <link rel="stylesheet" href="/css/home/layout.css?ver=6" />
+    <!--	전체레이아웃-->
+    <link rel="stylesheet" href="/css/home/main.css?ver=8" />
+    <!--	컨텐츠-->
+    <link rel="stylesheet" href="/css/home/swiper.min.css" />
+    <!--	뉴스스타일-->
+    <link rel="stylesheet" href="/css/XEIcon/xeicon.min.css" />
+    <!--	아이콘-->
+    <link rel="stylesheet" href="/css/home/slick.css" />
+    <!--뉴스-->
+
+
+    <script src="/js/home/jquery-3.1.0.min.js"></script>
+    <script src="/js/home/fullpage.min.js"></script>
+    <script src="/js/home/swiper.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+
+            /* 	$('body').on('click', function(e) {
+                    console.log("영역 클릭");
+                    var $tgPoint = $(e.target);
+                    var $popArea = $tgPoint.hasClass('navDepth2')
+            
+                    if ($popArea) {
+                        console.log("1111");
+                        $(".navDepth2").css({"display":"none"})
+                    }else{
+                        console.log("2222");
+                    }
+                }); */
+
+            $.ajax({//메인 메뉴 뿌리기(1depth, 2depth)
+                url: "/servlet/WMINDEX?COMMAND=MENU",
+                data: {
+                    "SEQ": "1"
+                },
+                dataType: "json",
+                type: "GET",
+                error: function () {
+                    alert('통신실패!!');
+                },
+                success: function (data) {
+                    var headerMenu = "";
+                    var FFDEPTH = data.result.FFDEPTH;
+                    var SFDEPTH = data.result.SFDEPTH;
+                    var SSNAME = data.result.SSNAME;
+                    var SMENU_ID = data.result.SMENU_ID;
+                    var FFNAME = data.result.FFNAME;
+                    var FMENU_ID = data.result.FMENU_ID;
+                    var url;
+                    headerMenu += "<ul>";
+                    for (var i = 0; i < data.result.FFDEPTH.length; i++) {
+                        url = SMENU_ID[i] || "javascript:void(0);";
+                        headerMenu += "<li class='menu'>"
+                            + "<a href='/servlet/WMINDEX?COMMAND=" + FMENU_ID[i] + "'>" + FFNAME[i] + "</a>"
+                            + "	<ul class='sub'>				 ";
+
+                        for (j = 0; j < data.result.SSNAME.length; j++) {
+                            url = SMENU_ID[j] || "javascript:void(0);";
+                            if (FFDEPTH[i] == SFDEPTH[j]) {
+                                headerMenu += "		<li>																"
+                                    + "			<a href='/servlet/WMINDEX?COMMAND=" + url + "'>" + SSNAME[j] + "</a>	"
+                                    + "		</li>																";
+                            }
+                        }
+                        headerMenu += "	</ul>																		"
+                            + "</li>																			"
+                    }
+                    headerMenu += "</ul>";
+                    $(headerMenu).appendTo(".gnb");
+                }
+            });
+
+
+            $('.gnb, .menu_bar, .timg li:first').hover(function () {
+                var num = $(this).index('.menu') + 1;
+
+                $('.menu_bar , .sub ').stop().slideDown();
+                $('.timg li').slideUp();
+                $('.timg li').eq(num).stop().slideDown();
+
+            },
+
+                function () {
+                    $('.menu_bar , .sub ').stop().slideUp();
+                });
+
+
+            //mobileBtn
+            $(document).ready(function () {
+                var cnt = 0; //0과 1을 담는 스위치변수
+                //delay메서드는 animate메서드, 시각효과 메서드에만 사용
+                //addClass메서드 toggleClass메서드에는 사용되지 않음
+
+                //초기실행
+                $('.mob').slideUp();
+                $('.mob').css({
+                    opacity: 0,
+
+                });
+
+                $('.mobileBtn').click(function () {
+                    if (cnt == 0) { //X로 변경
+                        //두번째 라인 사라지게 처리
+                        setTimeout(function () {
+                            $('.mobileBtn .line02').addClass('on');
+                        }, 0);
+
+                        //첫번째 선과 세번째 선이 십자가로 크로스
+                        setTimeout(function () {
+                            $('.mobileBtn .line01').addClass('on');
+                            $('.mobileBtn .line03').addClass('on');
+                        }, 300);
+
+                        //크로스가 45도를 기울게 처리 => X로 변경
+                        setTimeout(function () {
+                            $('.mobileBtn a').addClass('on');
+                        }, 600);
+                        $('.mob').slideDown();
+                        $('.mob').animate({
+                            opacity: 1,
+
+                        }, 'slow');
+
+                        $('.tnav').animate({
+                            top: 70
+                        }, 'slow');
+
+                        cnt = 1;
+                    } else { //햄버거로 변경
+                        //한번에 변경
+                        $('.mobileBtn a').removeClass('on');
+                        $('.mobileBtn .line01').removeClass('on');
+                        $('.mobileBtn .line03').removeClass('on');
+                        $('.mobileBtn .line02').removeClass('on');
+                        $('.mob li a').find('div').removeClass('on');
+
+                        $('.mob').animate({
+                            opacity: 0,
+
+                        }, 'slow', function () {
+                            $(this).find('.sub').slideUp(0);
+                            $('.mob > ul > li').removeClass('on');
+                        });
+
+                        $('.tnav').animate({
+
+                        }, 'slow');
+
+                        cnt = 0;
+                    }
+                });
+
+                //메인네비 클릭시 하위네비 보이게 처리
+                $('.mob li a').click(function () {
+                    //열려 있지 않다면 열기
+                    var is = $(this).next().is(':hidden');
+
+
+                    $('.mob li').removeClass('on');
+                    $(this).parent().addClass('on');
+
+
+                    if (is) {
+                        $('.mob_menu .sub').slideUp(0);
+                        $(this).next().slideDown(0);
+                        $('.mob li a').find('div').removeClass('on');
+                        $(this).find('div').addClass('on');
+                    } else {
+                        $('.mob_menu .sub').slideUp(0);
+                        $('.mob_menu > ul > li').removeClass('on');
+                        $(this).find('div').removeClass('on');
+                    }
+                });
+            });
+
+
+
+        });
+
+
+        $(function () {
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 400) {
+                    $('.btn_ftop_b').fadeIn();
+                } else {
+                    $('.btn_ftop_b').fadeOut();
+                }
+            });
+
+            $(".btn_ftop_b").click(function () {
+                $('html, body').animate({ scrollTop: 0 }, 400);
+                return false;
+            });
+        });
+
+
+
+
+
+    </script>
+    <script src="/js/home/slick.js"></script>
+
+    <script type="text/javascript">
+
+        function getCookie(name) {
+            var nameOfCookie = name + "=";
+            var x = 0;
+            while (x <= document.cookie.length) {
+                var y = (x + nameOfCookie.length);
+                if (document.cookie.substring(x, y) == nameOfCookie) {
+                    if ((endOfCookie = document.cookie.indexOf(";", y)) == -1) endOfCookie = document.cookie.length;
+                    return unescape(document.cookie.substring(y, endOfCookie));
+                }
+                x = document.cookie.indexOf(" ", x) + 1;
+                if (x == 0) break;
+            }
+            return "";
+        }
+
+        function setCookie(name, value, expiredays) {
+            var todayDate = new Date();
+            todayDate.setDate(todayDate.getDate() + expiredays);
+            document.cookie = name + "=" + escape(value) + "; path=/; expires=" + todayDate.toGMTString() + ";"
+        }
+
+        // 게시판에서 글을 클릭했을때
+        $(document).on('click', '#newyearpopup img', function (e) {
+            //input rownum에 가져온 rownum를 넣어줌
+            $("#SEQ").val(60);
+            $("#ROWNUM").val(14);
+            var x = document.getElementById("searchForm");
+            x.action = "/servlet/WMINDEX?COMMAND=NEWSDETAIL";
+            x.submit();
+        });
+
+        /*
+         * 연하장 팝업
+         */
+        // 모바일 여부
+        var isMobile = false;
+        // PC 환경
+        var filter = "win16|win32|win64|mac";
+
+        if (navigator.platform) {
+            isMobile = filter.indexOf(navigator.platform.toLowerCase()) < 0;
+        }
+
+        $(function () {
+            if (!(getCookie("newyearpopup") == "false")) {
+                if (!isMobile) {
+                    $("#newyearpopup").css({ "margin-top": ($(window).scrollTop() + ($(window).height() / 2) - 300) + "px", "margin-left": ($(window).scrollLeft() + $(window).width() / 2 - 300) + "px" }).fadeIn().find("a.close").css("cursor", "pointer").click(function () {
+                        if ($(this).hasClass("cookie")) setCookie("newyearpopup", "false", 1);
+                        $(this).parents("div#newyearpopup").remove();
+                    });
+                }
+
+            }
+        })
+
+    </script>
+</head>
+
+<body class="pc top_ban_none">
+    <a href="#main" id="skip_nav">본문바로가기</a>
+    <div id="wrap">
+
+        <div id="header">
+
+
+
+            <header>
+                <div class="menu_bar"></div>
+                <div class="header_wrap">
+                    <h1 class="pc_logo"><a href="/servlet/WMINDEX?COMMAND=MAIN"><img src="/images/main/site_logo.png"
+                                alt="Digitalzone LOGO"></a></h1>
+                    <nav class="gnb">
+                    </nav>
+                </div>
+            </header>
+
+
+            <div>
+                <div class="mob_header">
+
+                    <h1 class="dlogo wrap_c"><a href="/servlet/WMINDEX?COMMAND=MAIN"><img
+                                src="/images/main/site_logo.png" alt="Digitalzone LOGO" style="max-width: 100%;"></a>
+                    </h1>
+
+                    <div class="mob_menu">
+                        <div class="mobileBtn">
+                            <a href="javascript:;">
+                                <span class="line01"></span>
+                                <span class="line02"></span>
+                                <span class="line03"></span>
+                            </a>
+                        </div>
+                        <nav class="mob">
+                            <h2 class="blind"></h2>
+                            <ul class="mo">
+                                <li><a href="javascript:;">기업소개<div class="plusIcon"></div></a>
+                                    <ul class="sub">
+                                        <li><a href="/servlet/WMINDEX?COMMAND=busi_info_info">기업정보</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=busi_hist_hist">기업연혁</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=busi_gree_gree">ceo인사말</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=busi_awar_awar">수상/인증/특허</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=busi_proj_refe">정부과제 수행실적</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=busi_cust_educ">고객사</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=busi_loca_loca">위치안내</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="javascript:;">제품<div class="plusIcon"></div></a>
+                                    <ul class="sub">
+                                        <li><a href="/servlet/WMINDEX?COMMAND=prod_docu_inte">전자문서</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=prod_bloc_docu">블록체인/DID</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=prod_bigd_matc">빅데이터/AI</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=prod_vrar_spor">VR/AR</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=prod_paym_paym">페이먼트</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="javascript:;">서비스<div class="plusIcon"></div></a>
+                                    <ul class="sub">
+                                        <li><a href="/servlet/WMINDEX?COMMAND=serv_univ_inte">대학 서비스</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=serv_hosp_inte">병원 서비스</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=serv_comp_secu">기업 서비스</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=serv_star_supp">창업지원서비스</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=serv_itos_publ">시스템 통합(SI)</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="javascript:;">기업홍보<div class="plusIcon"></div></a>
+                                    <ul class="sub">
+                                        <li><a href="/servlet/WMINDEX?COMMAND=prom_digi_news">디지털존 소식</a></li>
+                                        <li><a href="/servlet/WMINDEX?COMMAND=prom_recr_tale">채용안내</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+
+
+                        </nav>
+                    </div>
+
+                </div>
+                <!--				 <header> -->
+            </div>
+
+            <a href="#" class="btn_ftop_b">TOP</a>
+
+        </div>
+
+        <div id="fullpage_control">
+            <a href="#" class="btn_fup"><img src="/images/main/btn_up.png" alt="이전섹션으로 이동" /></a>
+            <a href="#" class="btn_fdown"><img src="/images/main/btn_down.png" alt="다음섹션으로 이동" /></a>
+            <a href="#" class="btn_ftop"><img src="/images/main/btn_top.png" alt="첫번째 섹션으로 이동" /></a>
+        </div>
+
+        <ul id="fullpage_nav">
+            <li data-menuanchor="fsection01"><a href="#fsection01" role="tab" aria-selected="false"
+                    aria-controls="section01"><span>HOME</span></a></li>
+            <li data-menuanchor="fsection02"><a href="#fsection02" role="tab" aria-selected="false"
+                    aria-controls="section02"><span>PRODUCT</span></a></li>
+            <li data-menuanchor="fsection03"><a href="#fsection03" role="tab" aria-selected="false"
+                    aria-controls="section03"><span>SERVICE</span></a></li>
+            <li data-menuanchor="fsection04"><a href="#fsection04" role="tab" aria-selected="false"
+                    aria-controls="section04"><span>NEWS</span></a></li>
+            <li data-menuanchor="fsection05"><a href="#fsection05" role="tab" aria-selected="false"
+                    aria-controls="section05"><span>CONTACT US</span></a></li>
+        </ul>
+
+        <div id="fullpage">
+            <!-- //pc_header  -->
+            <div id="section_header" class="section fp-auto-height">
+                <div class="header_size"></div>
+            </div>
+
+            <!-- //section01 -->
+            <div id="section01" class="section fp-auto-height-responsive animated_child" style="background-color: #333">
+                <div style="height:100%;">
+                    <div class="main_swiper-container swiper-container-initialized swiper-container-horizontal">
+                        <div class="parallax-bg" data-swiper-parallax="-23%"></div>
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide swiper-slide-active main_slide_pc main_slide_m main_img1">
+                                <div class="main_slide_l">
+                                    <ul>
+                                        <li class="title_h2">No1. Digital Transformation Service Partner</li>
+                                        <li class="title_h1">디지털 전환, 4차 산업의 미래를 준비하는<br />DIGITALZONE</li>
+                                        <li class="title_h3">데이터 혁명의 시대, 적극적인 투자와 한발 앞선 기술연구로 다가올 미래를 준비합니다.</li>
+                                        <li class="float_button">
+                                            <ul>
+                                                <li class="button"><a href="/servlet/WMINDEX?COMMAND=busi_info_info">자세히
+                                                        보기</a></li>
+                                                <!-- 												<li class="videoplay"> -->
+                                                <!-- 													<a href="#none" class="videoBtn" data-key="0">영상 보기</a> -->
+                                                <!-- 												</li>		 -->
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- 								<div class="video" style="width:0px"> -->
+                                <!-- 									<video width="100%" height="40%" loop autoplay muted controls type="video/mp4" id="myvideo0" >  -->
+                                <!-- 										<source src="/images/main/Digitalzone_Promotion_Main.mp4"> -->
+                                <!-- 									</video>  -->
+                                <!-- 								</div> -->
+                            </div>
+
+
+                            <div class="swiper-slide swiper-slide-active main_slide_pc main_slide_m main_img2">
+                                <div class="main_slide_l">
+                                    <ul>
+                                        <li class="title_h2">No1. eTrust Document Portal</li>
+                                        <li class="title_h1">전자증명 포털, 고객의 시간을 소중히 하는<br />DOCULINK-웹민원센터</li>
+                                        <li class="title_h3 bc_txt">Since1999, 국내 대학 60%와 100여개 기관의 증명서 발급·제출을 위한 포털
+                                            서비스를 제공합니다. </li>
+                                        <li class="float_button">
+                                            <ul>
+                                                <li class="button"><a href="/servlet/WMINDEX?COMMAND=serv_univ_inte">자세히
+                                                        보기</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="swiper-slide swiper-slide-active main_slide_pc main_slide_m main_img3">
+                                <div class="main_slide_l">
+                                    <ul>
+                                        <li class="title_h2">No1. Medical-Insurance Support Service</li>
+                                        <li class="title_h1">의료증명서 발급, 환자를 생각하는 작은 배려<br />MEDCERTI</li>
+                                        <li class="title_h3 bc_txt">의료증명서 인터넷 발급과 보험사 연계를 통해 간편한 보험청구 환경을 제공합니다.</li>
+                                        <li class="float_button">
+                                            <ul>
+                                                <li class="button"><a href="/servlet/WMINDEX?COMMAND=serv_hosp_inte">자세히
+                                                        보기</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                            <div class="swiper-slide swiper-slide-active main_slide_pc main_slide_m main_img4">
+                                <div class="main_slide_l">
+                                    <ul>
+                                        <li class="title_h2">The First &amp; The Best - Blockchain eTrust Document
+                                            platform</li>
+                                        <li class="title_h1">블록체인 전자문서 발급·유통 플랫폼<br />DOCUCHAIN</li>
+                                        <li class="title_h3 bc_txt bc_txt1">분산신원인증 기반 대용량 저장 및 확장 가능한 블록체인 플랫폼으로 다양한 산업
+                                            영역에서 온라인 완결이 가능한 신뢰 서비스를 제공합니다.</li>
+                                        <li class="float_button">
+                                            <ul>
+                                                <li class="button"><a href="/servlet/WMINDEX?COMMAND=prod_bloc_docu">자세히
+                                                        보기</a></li>
+                                                <li class="videoplay">
+                                                    <a href="#none" class="videoBtn" data-key="3">영상 보기</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="video" style="width:0px">
+                                    <video width="100%" height="40%" loop autoplay muted controls type="video/mp4"
+                                        id="myvideo3">
+                                        <source src="/images/main/digitalzone_DocuChain.mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Pagination -->
+                        <div
+                            class="swiper-pagination swiper-pagination-white swiper-pagination-clickable swiper-pagination-bullets">
+                            <span class="swiper-pagination-bullet swiper-pagination-bullet-active" tabindex="0"
+                                role="button" aria-label="Go to slide 1"></span>
+                            <span class="swiper-pagination-bullet" tabindex="0" role="button"
+                                aria-label="Go to slide 2">
+                                <div class="tip_box1">웹민원센터</div>
+                            </span>
+                            <span class="swiper-pagination-bullet" tabindex="0" role="button"
+                                aria-label="Go to slide 3">
+                                <div class="tip_box1">메드서티</div>
+                            </span>
+                            <span class="swiper-pagination-bullet" tabindex="0" role="button"
+                                aria-label="Go to slide 4">
+                                <div class="tip_box1">다큐체인</div>
+                            </span>
+                        </div>
+                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- //section02 -->
+            <div id="section02" class="section fp-auto-height-responsive" style="background-color: #ffffff;">
+                <div class="main-tit">
+                    <h3>PRODUCT</h3>
+                    <p>전자문서, 블록체인, BigData/AI, VR/AR 등 첨단 IT기술을 기반으로 최적의 시스템을 제공합니다.</p>
+                </div>
+                <div class="mainCon3">
+                    <div class="inner">
+                        <div class="bottomArea" style="opacity: 1; top: 0px;">
+
+                            <div class="box box1">
+                                <a class="more" data-key='prod_docu_inte'>
+                                    <p class="icon"><img src="/images/main/icon_main_p_1.png" alt=""></p>
+                                    <p class="tit">전자문서</p>
+                                    <p class="line"></p>
+                                    <div class="linebox" style="display: none; opacity: 1;">
+                                        <p class="icon"><img src="/images/main/icon_main_p_1_h.png" alt=""></p>
+                                        <p class="tit">전자문서</p>
+                                        <div class="txt">
+                                            <ul>
+
+                                                <li><span>-</span>인터넷 증명발급 시스템
+                                                </li>
+
+                                                <li><span>-</span>무인 증명서 자동발급기
+                                                </li>
+
+                                                <li><span>-</span>문서보안발급 시스템
+                                                </li>
+
+
+                                            </ul>
+                                        </div>
+                                        <p class="more" data-key='prod_docu_inte'>자세히 보기</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="box box2">
+                                <a class="more" data-key='prod_bloc_docu'>
+                                    <p class="icon"><img src="/images/main/icon_main_p_2.png" alt=""></p>
+                                    <p class="tit">블록체인/DID</p>
+                                    <p class="line"></p>
+                                    <div class="linebox" style="display: none; opacity: 1;">
+                                        <p class="icon"><img src="/images/main/icon_main_p_2_h.png" alt=""></p>
+                                        <p class="tit">블록체인/DID</p>
+                                        <div class="txt">
+                                            <ul>
+
+                                                <li><span>-</span>전자문서 발급/유통 블록체인 플랫폼
+                                                </li>
+
+                                                <li><span>-</span>스마트 보험금 청구 시스템
+                                                </li>
+
+
+                                            </ul>
+                                        </div>
+                                        <p class="more" data-key='prod_bloc_docu'>자세히 보기</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="box box3">
+                                <a class="more" data-key='prod_bigd_matc'>
+                                    <p class="icon"><img src="/images/main/icon_main_p_3.png" alt=""></p>
+                                    <p class="tit">빅데이터/AI</p>
+                                    <p class="line"></p>
+                                    <div class="linebox" style="display: none; opacity: 1;">
+                                        <p class="icon"><img src="/images/main/icon_main_p_3_h.png" alt=""></p>
+                                        <p class="tit">빅데이터/AI</p>
+                                        <div class="txt">
+                                            <ul>
+
+                                                <li><span>-</span>창업학습 및 운영지원 시스템
+                                                </li>
+
+                                                <li><span>-</span>취업 매칭 시스템
+                                                </li>
+
+
+                                            </ul>
+                                        </div>
+                                        <p class="more" data-key='prod_bigd_matc'>자세히 보기</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="box box4">
+                                <a class="more" data-key='prod_vrar_spor'>
+                                    <p class="icon"><img src="/images/main/icon_main_p_4.png" alt=""></p>
+                                    <p class="tit">VR/AR</p>
+                                    <p class="line"></p>
+                                    <div class="linebox" style="display: none; opacity: 1;">
+                                        <p class="icon"><img src="/images/main/icon_main_p_4_h.png" alt=""></p>
+                                        <p class="tit">VR/AR</p>
+                                        <div class="txt">
+                                            <ul>
+
+                                                <li><span>-</span>스포츠 게임 콘텐츠
+                                                </li>
+
+                                                <li><span>-</span>가상피팅 콘텐츠
+                                                </li>
+
+                                                <li><span>-</span>문화기술 콘텐츠
+                                                </li>
+
+
+                                            </ul>
+                                        </div>
+                                        <p class="more" data-key='prod_vrar_spor'>자세히 보기</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="box box5">
+                                <a class="more" data-key='prod_paym_paym'>
+                                    <p class="icon"><img src="/images/main/icon_main_p_5.png" alt=""></p>
+                                    <p class="tit">페이먼트</p>
+                                    <p class="line"></p>
+                                    <div class="linebox" style="display: none; opacity: 1;">
+                                        <p class="icon"><img src="/images/main/icon_main_p_5_h.png" alt=""></p>
+                                        <p class="tit">페이먼트</p>
+                                        <div class="txt">
+                                            <ul>
+
+                                                <li><span>-</span>간편결제시스템
+                                                </li>
+
+
+                                            </ul>
+                                        </div>
+                                        <p class="more" data-key='prod_paym_paym'>자세히 보기</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- //section03 -->
+            <div id="section03" class="section fp-auto-height-responsive">
+                <div class="main-tit">
+                    <h3 style="color: #fff; border-bottom: 2px solid #fff">SERVICE</h3>
+                    <p style="color: #fff;">대학,병원,공공기관 등 다양한 산업에 대한 풍부한 경험과 지식을 기반으로 최고의 서비스를 제공합니다.</p>
+                </div>
+
+                <div class="service_wrap">
+                    <ul class="service_list_wrap">
+
+                        <li class="service_list">
+                            <ul>
+                                <li class="s_l_icon u"><a class="more" data-key='serv_univ_inte'>
+                                    </a></li>
+                                <li class="s_l_txt">
+                                    <ul>
+                                        <li>대학 서비스</li>
+                                        <li>University Service</li>
+                                    </ul>
+                                </li>
+                                <li class="s_l_btn"><a class="more" data-key='serv_univ_inte'>자세히보기</a></li>
+                                <li class="s_l_img"><img src="/images/main/icon_agray.png" title="" class="more"
+                                        data-key='serv_univ_inte' /></li>
+                            </ul>
+                        </li>
+
+                        <li class="service_list">
+                            <ul>
+                                <li class="s_l_icon h"><a class="more" data-key='serv_hosp_inte'>
+                                    </a></li>
+                                <li class="s_l_txt">
+                                    <ul>
+                                        <li>병원 서비스</li>
+                                        <li>Hospital Service</li>
+                                    </ul>
+                                </li>
+                                <li class="s_l_btn"><a class="more" data-key='serv_hosp_inte'>자세히보기</a></li>
+                                <li class="s_l_img"><img src="/images/main/icon_agray.png" title="" class="more"
+                                        data-key='serv_hosp_inte' /></li>
+                            </ul>
+                        </li>
+
+                        <li class="service_list">
+                            <ul>
+                                <li class="s_l_icon c"><a class="more" data-key='serv_comp_secu'>
+                                    </a></li>
+                                <li class="s_l_txt">
+                                    <ul>
+                                        <li>기업 서비스</li>
+                                        <li>Corporate Service</li>
+                                    </ul>
+                                </li>
+                                <li class="s_l_btn"><a class="more" data-key='serv_comp_secu'>자세히보기</a></li>
+                                <li class="s_l_img"><img src="/images/main/icon_agray.png" title="" class="more"
+                                        data-key='serv_comp_secu' /></li>
+                            </ul>
+                        </li>
+
+                        <li class="service_list">
+                            <ul>
+                                <li class="s_l_icon s"><a class="more" data-key='serv_star_supp'>
+                                    </a></li>
+                                <li class="s_l_txt">
+                                    <ul>
+                                        <li>창업지원서비스</li>
+                                        <li>Support Service</li>
+                                    </ul>
+                                </li>
+                                <li class="s_l_btn"><a class="more" data-key='serv_star_supp'>자세히보기</a></li>
+                                <li class="s_l_img"><img src="/images/main/icon_agray.png" title="" class="more"
+                                        data-key='serv_star_supp' /></li>
+                            </ul>
+                        </li>
+
+                        <li class="service_list">
+                            <ul>
+                                <li class="s_l_icon i"><a class="more" data-key='serv_itos_publ'>
+                                    </a></li>
+                                <li class="s_l_txt">
+                                    <ul>
+                                        <li>시스템 통합(SI)</li>
+                                        <li>ITO Service</li>
+                                    </ul>
+                                </li>
+                                <li class="s_l_btn"><a class="more" data-key='serv_itos_publ'>자세히보기</a></li>
+                                <li class="s_l_img"><img src="/images/main/icon_agray.png" title="" class="more"
+                                        data-key='serv_itos_publ' /></li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <!-- //section04 -->
+
+            <div id="section04" class="section fp-auto-height-responsive" style="background-color: #ffffff">
+
+                <div id="new_wrap">
+                    <div id="news_Container">
+                        <!-- ****************** 메인컨텐츠 ********************** -->
+                        <div id="mainContent">
+                            <article id="mainNews">
+                                <article class="cm-tab-container">
+                                    <div class="cm-tab-content-wrapper main-tab-wrapper">
+                                        <div class="cm-tab-con" id="tabContent01">
+
+                                            <div class="main-tit">
+                                                <h3>NEWS</h3>
+                                                <p>디지털존 소식을 전해드립니다.</p>
+                                            </div>
+                                            <div class="main-news-slider area clearfix">
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='78' data-num='1'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='78'><img
+                                                                        src="../images/main/20220809_toss.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>[디지털존 8월호 뉴스레터] (주)디지털존 X 토스 대학증명서 발급 서비스 오픈!</p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">뉴스레터</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-08-09</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='76' data-num='2'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='76'><img
+                                                                        src="../images/main/20220712_nipa.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>[디지털존 7월호 뉴스레터] 공공기관 최초 &lt;NIPA 블록체인 보고서
+                                                                        원본증명(NFT) 체험 사이트&gt; 오픈!</p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">뉴스레터</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-07-12</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='79' data-num='3'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='79'><img
+                                                                        src="../images/main/20220818_MYDID_M.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>디지털존, 블록체인 기반 모바일 설문조사 패널인증 시스템 ‘마이디드’ 개발</p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">보도자료</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-07-11</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='77' data-num='4'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='77'><img
+                                                                        src="../images/main/20220713_NIPA.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>디지털존, 'NIPA 블록체인 보고서 NFT 체험 사이트' 오픈</p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">보도자료</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-06-20</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='75' data-num='5'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='75'><img
+                                                                        src="../images/main/20220613_iitp.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>[디지털존 6월호 뉴스레터] (주)디지털존, 정보통신기획평가원(IITP) '2022년
+                                                                        정보통신·방송 기술개발사업' 수주!</p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">뉴스레터</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-06-13</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='74' data-num='6'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='74'><img
+                                                                        src="../images/main/20220608_mou.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>디지털존-국민대학교 인공지능 분야 공동 프로젝트 운영을 위한 업무 협약(MOU) 체결
+                                                                    </p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">보도자료</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-06-02</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='73' data-num='7'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='73'><img
+                                                                        src="../images/main/20220509_dongtan.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>[디지털존 5월호 뉴스레터] (주)디지털존, 한림대학교동탄성심병원 인터넷 의료증명서 신규
+                                                                        발급 서비스 오픈!</p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">뉴스레터</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-05-09</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='72' data-num='8'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='72'><img
+                                                                        src="../images/main/20220411_simple.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>[디지털존 4월호 뉴스레터] (주)디지털존, 웹민원센터 간편인증 로그인 서비스 오픈!
+                                                                    </p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">뉴스레터</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-04-11</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="main-news-wrap">
+                                                    <div class="main-news-inner">
+                                                        <a data-key='71' data-num='9'>
+                                                            <!-- 권장 이미지 사이즈 :: 305*190 -->
+                                                            <div class="main-news-img">
+                                                                <div class="main-news-img-cover"></div>
+                                                                <span id="detail" data-key='71'><img
+                                                                        src="../images/main/20220314_initial.png"
+                                                                        alt=""></span>
+                                                            </div>
+                                                            <div class="main-news-info">
+                                                                <div class="main-news-info-tit font-noto">
+                                                                    <p>[디지털존 3월호 뉴스레터] 디지털존-SKT, 블록체인 기반 대학 제증명 서비스 오픈!
+                                                                    </p>
+                                                                </div>
+                                                                <div class="main-news-category clearfix">
+                                                                    <p class="category ">뉴스레터</p>
+                                                                    <p class="date"><i
+                                                                            class="material-icons"></i>2022-03-14</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- //section05 -->
+            <div id="section05" class="section fp-auto-height-responsive" style="background-color: #f2f2f2;">
+
+                <div class="main-tit">
+                    <h3>CONTACT US</h3>
+                    <p>디지털존에 대한 문의 및 제안사항을 보내주세요.</p>
+                </div>
+
+
+
+
+                <div class="contactus_wrap" style="margin-bottom: 230px;">
+                    <form method="post" id="mailForm" class="mail_frm" action="">
+                        <div class="c_l">
+
+                            <ul class="c_l_list" style="padding-left: 15px;">
+                                <li style="margin-right: 15px;"><span><i class="xi-map"></i></span><span>주소 :
+                                    </span><span>성암로330, 521(상암동, DMC첨단산업센터 5층)</span></li>
+                                <li><span><i class="xi-call"></i></span><span>전화 : </span><span>02-3153-7053(4)</span>
+                                </li>
+                            </ul>
+
+                            <ul class="c_r_list" style="margin-top: 20px;">
+                                <li>
+                                    <select name="mailCondition" id="maType" title="구분항목">
+                                        <option class="aa">카테고리</option>
+                                        <option>제품 문의</option>
+                                        <option>서비스 문의</option>
+                                        <option>채용 문의</option>
+                                        <option>영업/홍보 문의</option>
+                                        <option>기술/장애지원 문의</option>
+                                    </select>
+                                </li>
+                                <li><input type="text" placeholder="성명" name="name"></li>
+                                <li><input type="text" placeholder="회사명" name="company"></li>
+                                <li><input type="text" placeholder="이메일" name="email"></li>
+                                <li><input type="text" placeholder="연락처" name="phone"></li>
+
+                            </ul>
+
+                        </div>
+                        <div class="c_r">
+                            <ul class="c_r_list">
+                                <li><textarea placeholder="문의내용" name="context"></textarea></li>
+                                <li class="checkbox"><input type="checkbox" name="chk_info">개인정보 수집에 동의합니다. <a
+                                        href="javascript:;" class="personal"
+                                        style="display: inline; color: #ff6d02;">[내용보기]</a></li>
+                                <li class="c_r_btn"><a id="mail">메일로 문의하기</a></li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                <div id="footer">
+
+
+                    <script>
+                        function pop(u) {//추가 신청
+                            var w = 1000;
+                            var h = 680;
+                            var opt = "width=" + w + "," + "height=" + h + ",scrollbars = yes";
+
+                            window.open(u, "", opt);
+                        } 
+                    </script>
+
+
+                    <div class="inwrap">
+                        <div class="inwrap_left">
+                            <img src="/images/main/footer_logo.png" class="logo" width="200px" alt="사업부홈페이지" />
+                        </div>
+                        <div class="inwrap_right">
+                            <div class="footer_cont">
+                                <p style="color: white; padding-bottom: 10px; font-size: 15px; cursor: pointer;"><a
+                                        href="javascript:pop('/jsp/etc/personal.html');" class="foot_personal"
+                                        style="color:white;" title="개인정보처리방침 새창으로 열림">개인정보처리방침</a></p>
+                                <p>서울시 마포구 성암로330, 521(상암동, DMC첨단산업센터 5층)(03920)</p>
+                                <p>TEL 1644-2378｜ FAX 02-3151-0942</p>
+                                <p class="copyright">Copyright ⓒ 2014 DIGITALZONE. All Rights Reserved. </p>
+                            </div>
+                            <div class="footer_mark">
+                                <p><img src="/images/main/mark1.png" alt="gs 인증 마크"></p>
+                                <p><img src="/images/main/mark2.png" alt="서울시 인증 마크"></p>
+                                <p><a href="javascript:;" class="isms"><img src="/images/main/mark4.png"
+                                            alt="isms 인증 마크"></a></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="isms_pop">
+                        <div class="isms">
+                            <div class="pophead">
+                                <span>※ 정보보호 관리체계 인증</span>
+                            </div>
+                            <div class="inner">
+                                <div class="per_cont">[인증범위] 증명서 발급대행 서비스 운영</div>
+                                <div class="per_cont">[유효기간] 2020.06.24~2023.06.23</div>
+                            </div>
+                            <div class="btn_wrap01"><a class="per_conf">확인</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="personal_pop">
+            <div class="personal">
+                <div class="pophead">
+                    <span>※ 개인정보의 수집에 대한 안내</span>
+                </div>
+                <div class="inner">
+                    <div class="per_cont">1. 개인정보의 수집 목적<br>- 고객문의접수 및 처리, 결과 회신</div>
+                    <div class="per_cont">2. 수집하는 개인정보 항목<br>- 성명, 회사명, 이메일, 연락처</div>
+                    <div class="per_cont">3. 개인정보의 보유 기간<br>- 문의 접수 후 2년간 보관</div>
+                </div>
+                <div class="btn_wrap01"><a class="per_conf">확인</a></div>
+            </div>
+        </div>
+
+        <!-- 		<div id="newyearpopup" style="position:absolute; top:0; z-index:20150114; display:none; width:500px;"> -->
+        <!-- 			<div style="width:500px; border:2px solid #ec6122; margin:0;"> -->
+        <!-- 				<img src="/images/board/20211231_let.jpg" /> -->
+
+        <!-- 				<div style="padding:10px;padding-bottom:30px; background-color:white;border-top: 2px solid #ec6122;"> -->
+        <!-- 					<div style="float:left;"><a class="close cookie"><input type="checkbox" style="width:20px; height:20px; vertical-align: middle;"/> 오늘 하루 보지 않기</a></div> -->
+        <!-- 					<div style="float:right;"><a class="close">닫기</a></div> -->
+        <!-- 				</div> -->
+        <!-- 			</div> -->
+        <!-- 		</div> -->
+
+        <form method="post" id="searchForm" class="search_frm" action="">
+            <input type="hidden" id="SEQ" name="SEQ" value="">
+            <input type="hidden" id="ROWNUM" name="ROWNUM" value="">
+        </form>
+
+        <script src="/js/home/main.js?ver=6"></script>
+
+        <!-- Initialize Swiper -->
+        <script>
+
+            var swiper = new Swiper('.main_swiper-container', {
+                speed: 2000,
+                loop: true,
+                parallax: true,
+                autoplay: {
+                    delay: 10000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                on: {
+                    init: function () {
+                        setTimeout(function ESresize() {
+
+                            if (typeof (Event) === 'function') {
+                                // modern browsers
+                                window.dispatchEvent(new Event('resize'));
+                            } else {
+                                //This will be executed on old browsers and especially IE
+                                var resizeEvent = window.document.createEvent('UIEvents');
+                                resizeEvent.initUIEvent('resize', true, false, window, 0);
+                                window.dispatchEvent(resizeEvent);
+                            }
+                        }, 200)
+                    },
+                },
+            });
+
+        </script>
+
+    </div>
+</body>
+
+</html>
